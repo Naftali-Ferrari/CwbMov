@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.filtro {
+    margin-bottom: 10px;
+}
+
+img.popup-foto {
+    width: 100px;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+input,
+select,
+textarea,
+button {
+    display: block;
+    margin-bottom: 10px;
+    padding: 8px;
+    width: 250px;
+}
+
+button {
+    cursor: pointer;
+    background-color: #435129 ;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+/*------------------------------------ FORM PAGE ----------------------------------*/
+
+.formcss {
+    position: relative;
+    transform: TranslateX(90%);
+    background-color: black;
+    width: 600px;
+    height: auto;
+    
+    padding:20px;
+    margin: 0px;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+    overflow: hidden;
+}
+
+#formbtn:hover {
+    box-shadow: 5px 10px black;
+}
+
+/*#optcor:hover {
+    background-color: #D6B700;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    transform: translate3d(0, 0, 10px) rotateX(5deg);
+}*/
+

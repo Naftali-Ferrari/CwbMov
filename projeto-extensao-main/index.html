@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Denúncias</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css"/>
+   
+</head>
+
+<body>
+    <h2>Registrar Denúncia</h2>
+    <div class="formcss">
+        <form id="form-denuncia" enctype="multipart/form-data">
+            <input type="text" name="usuario_nome" placeholder="Seu nome" required>
+            <input type="text" name="bairro" placeholder="Bairro" required>
+            <select name="categoria" id="filtro-categoria" required>
+                <option value="" disabled selected hidden>Selecione uma categoria</option>
+                <option value="lixo" id="optcor">Lixo acumulado</option>
+                <option value="iluminacao" id="optcor">Iluminação pública</option>
+                <option value="acessibilidade" id="optcor">Acessibilidade</option>
+                <option value="calcadas" id="optcor">Calçadas</option>
+                <option value="areas_verdes" id="optcor">Áreas verdes</option>
+            </select>
+            <textarea name="descricao" placeholder="Descreva o problema" required></textarea>
+            <input type="file" name="foto">
+            <input type="text" name="latitude" id="latitude" placeholder="Latitude" required readonly>
+            <input type="text" name="longitude" id="longitude" placeholder="Longitude" required readonly>
+            <button type="submit" id="formbtn">Enviar denúncia</button>
+        </form>
+    </div>
+
+    <h2>Mapa de Denúncias</h2>
+    <div class="filtro">
+        Filtrar por categoria:
+        <select id="filtro-mapa">
+            <option value="">Todas</option>
+            <option value="lixo" id="optcor">Lixo acumulado</option>
+            <option value="iluminacao" id="optcor">Iluminação pública</option>
+            <option value="acessibilidade" id="optcor">Acessibilidade</option>
+            <option value="calcadas" id="optcor">Calçadas</option>
+            <option value="areas_verdes" id="optcor">Áreas verdes</option>
+        </select>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Inicializa mapa
+        var map = L.map('map').setView([-25.4284, -49.2733], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var marcadorSelecionado;
+        var marcadoresMapa = [];
+
+        // Cores e ícones por categoria
+        var cores = {
+            lixo: '#f28f3b',
+            iluminacao: '#f94144',
+            acessibilidade: '#577590',
+            calcadas: '#43aa8b',
+            areas_verdes: '#90be6d'
+        };
+        var icones = {
+            lixo: '🗑️',
+            iluminacao: '💡',
+            acessibilidade: '♿',
+            calcadas: '🚶',
+            areas_verdes: '🌳'
+        };
+
+        // Seleção de localização
+        map.on('click', function (e) {
+            var lat = e.latlng.lat.toFixed(6);
+            var lng = e.latlng.lng.toFixed(6);
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+
+            if (marcadorSelecionado) {
+                marcadorSelecionado.setLatLng([lat, lng]);
+            } else {
+                marcadorSelecionado = L.marker([lat, lng]).addTo(map)
+                    .bindPopup("Local selecionado")
+                    .openPopup();
+            }
+        });
+
+        // Carregar denúncias do banco
+        function carregarDenuncias(filtro = "") {
+            marcadoresMapa.forEach(m => map.removeLayer(m));
+            marcadoresMapa = [];
+
+            fetch('php/buscar.php')
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(d => {
+                        var lat = parseFloat(d.latitude);
+                        var lng = parseFloat(d.longitude);
+
+                        if (!filtro || d.categoria === filtro) {
+                            var popupHtml = `
+                                <div style="max-width:220px; background-color:${cores[d.categoria]}; padding:8px; border-radius:6px; color:white;">
+                                  <b>${icones[d.categoria]} Categoria:</b> ${d.categoria}<br>
+                                  <b>Bairro:</b> ${d.bairro}<br>
+                                  <b>Descrição:</b> ${d.descricao}<br>
+                                  ${d.foto ? `<a href="uploads/${d.foto}" target="_blank">
+                                                <img src="uploads/${d.foto}" style="width:100px; margin-top:5px; border-radius:4px;">
+                                              </a>` : '<i>Sem foto</i>'}
+                                </div>
+                            `;
+                            var marcador = L.marker([lat, lng], {
+                                icon: L.divIcon({
+                                    className: 'marcador-personalizado',
+                                    html: `<div style="background-color:${cores[d.categoria]}; width:20px; height:20px; border-radius:50%; border: 2px solid white;"></div>`,
+                                    iconSize: [20, 20],
+                                    iconAnchor: [10, 10]
+                                })
+                            }).addTo(map).bindPopup(popupHtml);
+                            marcadoresMapa.push(marcador);
+                        }
+                    });
+                })
+                .catch(err => console.error('Erro ao carregar denúncias:', err));
+        }
+
+        // Carregar todas inicialmente
+        carregarDenuncias();
+
+        // Filtro de categoria
+        document.getElementById('filtro-mapa').addEventListener('change', function () {
+            carregarDenuncias(this.value);
+        });
+
+        // Envio do formulário via AJAX usando alert
+        document.getElementById('form-denuncia').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var lat = document.getElementById('latitude').value;
+            var lng = document.getElementById('longitude').value;
+            if (!lat || !lng) {
+                alert('Clique no mapa para selecionar o local da denúncia!');
+                return;
+            }
+
+            var formData = new FormData(this);
+
+            fetch('php/enviar.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(json => {
+                    alert(json.message);
+
+                    if (json.success) {
+                        this.reset();
+                        document.getElementById('latitude').value = '';
+                        document.getElementById('longitude').value = '';
+                        if (marcadorSelecionado) {
+                            map.removeLayer(marcadorSelecionado);
+                            marcadorSelecionado = null;
+                        }
+                        carregarDenuncias(document.getElementById('filtro-mapa').value);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Erro ao enviar denúncia.');
+                });
+        });
+    </script>
+</body>
+
+</html>
