@@ -39,19 +39,46 @@ button {
 
 /*------------------------------------ FORM PAGE ----------------------------------*/
 
-.formcss {
-    position: relative;
-    transform: TranslateX(90%);
-    background-color: black;
-    width: 600px;
+.logodiv{
     height: auto;
+}
+
+.formcontainer{
+    position: relative;
+    transform: TranslateX(95%);
+    background-color: rgba(196, 154, 154, 0.61);
+    width: 600px;
+    height: 60vh;
     
-    padding:20px;
+    padding:5vh;
     margin: 0px;
-    align-items: center;
-    text-align: center;
-    align-content: center;
-    overflow: hidden;
+    /*align-items: center;*/
+
+    display: flex;
+    justify-content: center;
+}
+
+#form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.alinha{
+    position:relative;
+    display: flex;
+    padding-left: 10px;
+    margin: 10px;
+    width: 100%;
+    height: auto;
+    gap: 50px;
+    /*background-color: white;*/
+}
+
+#campos{
+    box-sizing: border-box;
+    text-decoration: none;
+    border-color: rgb(241, 224, 201);
 }
 
 #formbtn:hover {

@@ -12,10 +12,15 @@
 
 <body>
     <h2>Registrar Denúncia</h2>
-    <div class="formcss">
-        <form id="form-denuncia" enctype="multipart/form-data">
-            <input type="text" name="usuario_nome" placeholder="Seu nome" required>
-            <input type="text" name="bairro" placeholder="Bairro" required>
+    <div class="formcontainer"><img src="uploads/logomarca1.png" alt=""></div>
+    <div class="formcontainer">
+        <form id="form-denuncia" enctype="multipart/form-data" id="form">
+            <div class="alinha">
+
+            <input type="text" name="usuario_nome" placeholder="Seu nome" required id="campos">
+            <input type="text" name="bairro" placeholder="Bairro" required id="campos">
+            
+            </div>
             <select name="categoria" id="filtro-categoria" required>
                 <option value="" disabled selected hidden>Selecione uma categoria</option>
                 <option value="lixo" id="optcor">Lixo acumulado</option>
@@ -26,8 +31,10 @@
             </select>
             <textarea name="descricao" placeholder="Descreva o problema" required></textarea>
             <input type="file" name="foto">
-            <input type="text" name="latitude" id="latitude" placeholder="Latitude" required readonly>
-            <input type="text" name="longitude" id="longitude" placeholder="Longitude" required readonly>
+            <div class="alinha">
+                <input type="text" name="latitude" id="latitude" placeholder="Latitude" required readonly id="campos">
+                <input type="text" name="longitude" id="longitude" placeholder="Longitude" required readonly id="campos">
+            </div>
             <button type="submit" id="formbtn">Enviar denúncia</button>
         </form>
     </div>
