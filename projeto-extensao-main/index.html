@@ -1,49 +1,64 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Denúncias</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/style.css"/>
-   
+    <title>Urbanize</title>
+
+    <!-- fonte moderna -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-    <h2>Registrar Denúncia</h2>
-    <div class="container">
-
-        <div class="imgbox">
-            <img src="uploads/logomarca1.png" alt="">
-        </div>
-
-        <div class="formbox">
-            <form id="form-denuncia" enctype="multipart/form-data" id="form">
-                <div class="alinha">
-                <input type="text" name="usuario_nome" placeholder="Seu nome" required id="campos">
-                <input type="text" name="bairro" placeholder="Bairro" required id="campos">
-                </div>
-                <select name="categoria" id="filtro-categoria" required>
-                    <option value="" disabled selected hidden>Selecione uma categoria</option>
-                    <option value="lixo" id="optcor">Lixo acumulado</option>
-                    <option value="iluminacao" id="optcor">Iluminação pública</option>
-                    <option value="acessibilidade" id="optcor">Acessibilidade</option>
-                    <option value="calcadas" id="optcor">Calçadas</option>
-                    <option value="areas_verdes" id="optcor">Áreas verdes</option>
-                </select>
-                <textarea name="descricao" placeholder="Descreva o problema" required></textarea>
-                <input type="file" name="foto">
-                <div class="alinha">
-                    <input type="text" name="latitude" id="latitude" placeholder="Latitude" required readonly id="campos">
-                    <input type="text" name="longitude" id="longitude" placeholder="Longitude" required readonly id="campos">
-                </div>
-                <button type="submit" id="formbtn">Enviar denúncia</button>
-            </form>
-        </div>
-    </div>
-
+    <header>
+        <nav>
+            <a class="logo">Urbanize</a>
+            <div class="mobile-menu">
+                 <div class="line1"></div>
+                 <div class="line2"></div>
+                 <div class="line3"></div>
+            </div>
+            <ul class="nav-list">
+               <li><a href="#">Inicio</a></li>
+               <li><a href="sobre.html">Sobre</a></li>
+               <li><a href="contato.html">Contato</a></li>
+               <li><a href="#">Participar</a></li>
+            </ul>
+        </nav>
+    </header>
     
-</body>
+    <main>
+      <section class="hero"> <!--bloco inicial-->
+        <div class="hero-texto">
+          <h1>Urbanize</h1>
+          <p>
+            Plataforma colaborativa que conecta pessoas, comunidades e poder público na missão de construir cidades mais sustentáveis, seguras e inclusivas. Aqui, qualquer cidadão pode registrar problemas urbanos do seu bairro, como buracos, lixo acumulado, falta de iluminação ou calçadas danificadas, e contribuir diretamente para a melhoria dos espaços públicos. Com o Urbanize, é possível resolver problemas urbanos de forma eficiente e transparente, tudo em um só lugar.
+          </p>
 
+          <div class="hero-bolas">
+            <div class="bola">
+              <span class="dot green"></span> Buracos e pavimentação
+            </div>
+            <div class="bola">
+              <span class="dot orange"></span> Iluminação pública
+            </div>
+            <div class="bola">
+             <span class="dot red"></span> Lixo e descarte
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-img">
+          <img src="img-1.jpg" alt=" muie no celular ">
+        </div>
+      </section>
+    </main>
+   
+    <script src="../projeto-extensao-main/js/mobile-navbar.js"></script>
+
+</body>
 </html>

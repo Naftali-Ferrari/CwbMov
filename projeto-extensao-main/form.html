@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Denúncias</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css"/>
+   
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a class="logo" href="index.html">Urbanize</a>
+                <div class="mobile-menu">
+                 <div class="line1"></div>
+                 <div class="line2"></div>
+                 <div class="line3"></div>
+            </div>
+
+            <ul class="nav-list">
+               <li><a href="index.html">Inicio</a></li>
+               <li><a href="#">Sobre</a></li>
+               <li><a href="contato.html">Contato</a></li>
+               <li><a href="#">Participar</a></li>
+            </ul>
+        </nav>
+    </header> 
+    <div class="divbanner">
+        <div class="bannerinfos">
+            <h2>Registre sua Denúncia</h2>
+            <img src="uploads/bannercity.png" alt="">
+        </div>
+        <div class="bannerinfos">
+            <h2>Sua voz transforma a cidade.</h2>
+            <p>Cuidar da cidade é um dever coletivo. Cada buraco ignorado, cada lâmpada queimada, cada calçada quebrada ou acúmulo de lixo que deixamos passar afeta a vida de todos nós. Quando escolhemos não agir, aceitamos viver em um espaço que poderia ser melhor, mais seguro, mais bonito e mais justo.</p>
+            <p>Nosso projeto existe para mudar isso. Ele foi criado para dar voz a quem vive a cidade todos os dias — você. Ao registrar um problema no mapa interativo, você não está apenas apontando uma falha: está exercendo seu papel como cidadão, contribuindo para que o poder público e as organizações locais possam agir com mais precisão e responsabilidade.</p>
+            <p>A construção de cidades sustentáveis e humanas começa com pequenas atitudes e a sua é essencial. Participar é um ato de empatia, consciência e pertencimento. É reconhecer que a cidade é nossa casa e que cada um tem o poder de cuidar dela.</p>
+        </div>
+    </div>
+    <div class="container">
+
+        <div class="imgbox">
+            <img src="uploads/logomarca1.png" alt="">
+        </div>
+
+        <div class="formbox">
+            <form id="form-denuncia" enctype="multipart/form-data">
+                <div class="alinha">
+                <input type="text" name="usuario_nome" placeholder="Seu nome" required id="campos">
+                <input type="text" name="bairro" placeholder="Bairro" required id="campos">
+                </div>
+                <select name="categoria" id="filtro-categoria" required>
+                    <option value="" disabled selected hidden>Selecione uma categoria</option>
+                    <option value="lixo" id="optcor">Lixo acumulado</option>
+                    <option value="iluminacao" id="optcor">Iluminação pública</option>
+                    <option value="acessibilidade" id="optcor">Acessibilidade</option>
+                    <option value="calcadas" id="optcor">Calçadas</option>
+                    <option value="areas_verdes" id="optcor">Áreas verdes</option>
+                </select>
+                <textarea name="descricao" placeholder="Descreva o problema" required></textarea>
+                <input type="file" name="foto">
+                <div class="alinha">
+                    <input type="text" name="latitude" id="latitude" placeholder="Latitude" required readonly id="campos">
+                    <input type="text" name="longitude" id="longitude" placeholder="Longitude" required readonly id="campos">
+                </div>
+                <button type="submit" id="formbtn">Enviar denúncia</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container-minidivs"> 
+                <div class="mini-card">
+                    <img src="uploads/araucarias.png" id="araucariaimg">
+                        <div class="mini-texto">
+                            <h4>Quem Somos</h4>
+                            <p>O Urbalize nasceu por meio de um projeto de extensão da faculdade Uniopet, deselvolvido pelos alunos André Felipe, Bruna, Emanoelli Valentina, Evelyn e Naftali Ferrari.
+                                Com propósito de fortalecer a cidadania e estimular o engajamento social por meio da tecnologia. </p>
+                    </div>
+                </div>
+    
+                <div class="mini-card">
+                    <img src="uploads/cwbbotanical.png">
+                        <div class="mini-texto">
+                            <h4>Objetivo</h4>
+                            <p>Nosso objetivo é dar visibilidade aos problemas urbanos que impactam a qualidade de vida das pessoas e inspirar soluções coletivas, baseadas na cooperação entre cidadãos, comunidades e gestores públicos.</p>
+                    </div>
+                </div>
+    
+                <div class="mini-card">
+                    <img src="uploads/cwb-citybus.png">
+                        <div class="mini-texto">
+                            <h4>Lema</h4>
+                            <p>Acreditamos que cada registro é um passo em direção a uma cidade melhor — mais segura, acessível, limpa e justa. </p>
+                    </div>
+                </div>
+              
+         </div>
+
+         <div class="card-final">
+                    <img src="uploads/cwb-fall.jpg">
+                        <div class="mini-texto">
+                            <h4>Futuro</h4>
+                            <p>Curitiba é o ponto de partida, mas o exemplo pode ecoar em todo o Brasil. Se cada pessoa fizer a sua parte, teremos comunidades mais seguras, acessíveis e cheias de vida.
+                            Não espere que alguém faça por você. Seja a mudança que a sua rua, o seu bairro e a sua cidade precisam. </p>
+                    </div>
+</body>
+
+</html>
