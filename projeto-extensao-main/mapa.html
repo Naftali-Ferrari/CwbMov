@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa De Denúncias</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="css/mapa.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="p-4 lg:p-6">
+    <div class="max-w-7xl mx-auto">
+ 
+        <header class="text-center mb-6">
+            <h1 class="text-3xl lg:text-4xl font-bold" style="color: var(--primary-color);">Mapa De Denúncias</h1>
+            <p class="text-gray-700">Explore a distribuição geográfica das denúncias</p>
+        </header>
+
+        <div class="card rounded-lg p-4 mb-6 flex flex-col sm:flex-row gap-4 items-center">
+            <h2 class="text-lg font-semibold whitespace-nowrap">Filtrar por:</h2>
+            <div class="w-full sm:w-1/2">
+                <label for="categoryFilter" class="sr-only">Categoria</label>
+                <select id="categoryFilter" class="filter-input w-full rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[var(--secondary-color)]">
+                    <option value="all">Todas as Categorias</option>
+                </select>
+            </div>
+            <div class="w-full sm:w-1/2">
+                <label for="neighborhoodFilter" class="sr-only">Bairro</label>
+                <select id="neighborhoodFilter" class="filter-input w-full rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[var(--secondary-color)]">
+                    <option value="all">Todos os Bairros</option>
+                </select>
+            </div>
+        </div>
+
+
+        <main class="grid grid-cols-1 gap-6">
+
+            <section class="card rounded-lg p-4 flex flex-col">
+                 <h3 class="text-xl font-semibold mb-3">Mapa de Ocorrências</h3>
+                 <p class="text-sm text-gray-700 mb-4">
+                    Este mapa exibe a localização geográfica de todas as denúncias filtradas. Use os menus acima para refinar os resultados por categoria ou bairro. Clique nos agrupamentos (números) para aproximar.
+                 </p>
+                <div id="map" class="w-full h-[70vh] rounded-lg border-2" style="border-color: var(--primary-color);">
+                    <div id="map-message" class="loading-message">Carregando dados...</div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+
+        let allDenunciasData = [];
+
+
+        const categoryFilter = document.getElementById('categoryFilter');
+        const neighborhoodFilter = document.getElementById('neighborhoodFilter');
+        const mapElement = document.getElementById('map');
+        const mapMessage = document.getElementById('map-message');
+
+     
+        const map = L.map('map').setView([-25.4284, -49.2733], 13);
+        
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+        
+        const markers = L.markerClusterGroup();
+        
+       
+        mapElement.style.position = 'relative';
+        mapMessage.style.display = 'block';
+
+        
+        async function fetchData(url, retries = 5) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const data = await response.json();
+                    
+                    if (!Array.isArray(data)) {
+                        throw new Error("Formato de dados inesperado. Esperado um array.");
+                    }
+                    
+                    return data;
+                } catch (error) {
+
+                    console.error(`Tentativa ${i + 1} falhou. Erro ao buscar dados:`, error.message);
+                    if (i === retries - 1) {
+                        throw new Error("Falha ao carregar dados do servidor após múltiplas tentativas.");
+                    }
+   
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        function updateMap(data) {
+            markers.clearLayers();
+            
+            if (data.length === 0) {
+                 mapMessage.textContent = "Nenhuma denúncia encontrada com os filtros atuais.";
+                 mapMessage.style.display = 'block';
+                 return;
+            }
+
+            mapMessage.style.display = 'none'; 
+
+            data.forEach(item => {
+
+                const lat = parseFloat(item.latitude);
+                const lng = parseFloat(item.longitude);
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    const marker = L.marker([lat, lng]);
+                    
+
+                    const dataFormatada = item.data_ocorrencia ? new Date(item.data_ocorrencia).toLocaleDateString('pt-BR') : 'N/A';
+
+                    marker.bindPopup(`
+                        <div class="popup-title">${item.categoria}</div>
+                        <b>Bairro:</b> ${item.bairro}<br>
+                        <b>Data:</b> ${dataFormatada}<br>
+                        <div class="popup-desc">"${item.descricao}"</div>
+                    `);
+                    markers.addLayer(marker);
+                }
+            });
+            map.addLayer(markers);
+            
+
+            map.fitBounds(markers.getBounds(), { padding: [50, 50] });
+        }
+
+
+        function populateFilters(data) {
+
+            categoryFilter.innerHTML = '<option value="all">Todas as Categorias</option>';
+            neighborhoodFilter.innerHTML = '<option value="all">Todos os Bairros</option>';
+
+            const categories = [...new Set(data.map(item => item.categoria))].filter(Boolean).sort();
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categoryFilter.appendChild(option);
+            });
+
+            const neighborhoods = [...new Set(data.map(item => item.bairro))].filter(Boolean).sort();
+            neighborhoods.forEach(bairro => {
+                const option = document.createElement('option');
+                option.value = bairro;
+                option.textContent = bairro;
+                neighborhoodFilter.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const selectedCategory = categoryFilter.value;
+            const selectedNeighborhood = neighborhoodFilter.value;
+
+            const filteredData = allDenunciasData.filter(item => {
+                const categoryMatch = selectedCategory === 'all' || item.categoria === selectedCategory;
+                const neighborhoodMatch = selectedNeighborhood === 'all' || item.bairro === selectedNeighborhood;
+                return categoryMatch && neighborhoodMatch;
+            });
+            
+            updateMap(filteredData);
+        }
+
+
+        async function initialize() {
+            try {
+
+                const data = await fetchData('buscar.php');
+                allDenunciasData = data;
+
+                populateFilters(allDenunciasData);
+
+                categoryFilter.addEventListener('change', applyFilters);
+                neighborhoodFilter.addEventListener('change', applyFilters);
+                
+                applyFilters();
+
+                if (allDenunciasData.length === 0) {
+                     mapMessage.textContent = "Nenhuma denúncia cadastrada no sistema.";
+                }
+
+            } catch (error) {
+                console.error("Erro fatal na inicialização:", error);
+                mapMessage.textContent = "Erro ao carregar dados. Verifique a conexão com o banco de dados. " + error.message;
+                map.setView([-25.4284, -49.2733], 13);
+            }
+        }
+
+        initialize();
+    });
+</script>
+
+</body>
+</html>
